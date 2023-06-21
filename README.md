@@ -70,3 +70,86 @@ Add the following code to a new file named `roles.tf`
 
 ![](./img/5.roles.jpg)
 
+#
+###  Further Resources to be created
+#
+As per our architecture we need to do the following:
+
+- Create Security Groups
+- Create Target Group for Nginx, WordPress and Tooling
+- Create certificate from AWS certificate manager
+- Create an External Application Load Balancer and Internal Application Load Balancer.
+- Create launch template for Bastion, Tooling, Nginx and WordPress
+- Create an Auto Scaling Group (ASG) for Bastion, Tooling, Nginx and WordPress
+- Create Elastic Filesystem
+- Create Relational Database (RDS)
+
+
+### CREATE SECURITY GROUPS
+We are going to create all the security groups in a single file, then we are going to refrence this security group within each resources that needs it.
+
+Create a file and name it `security.tf`, copy and paste the code below
+
+![](./img/6.sg.jpg)
+![](./img/6.sgb.jpg)
+![](./img/6sgc.jpg)
+
+### CREATE CERTIFICATE FROM AMAZON CERIFICATE MANAGER
+Create `cert.tf file` and add the following code snippets to it.
+
+![](./img/7.cert.jpg)
+
+### Create an external (Internet facing) Application Load Balancer (ALB)
+Create a file called alb.tf
+
+First of all we will create the ALB, then we create the target group and lastly we will create the lsitener rule.
+
+ALB
+ALB-target
+ALB-listener
+We need to create an ALB to balance the traffic between the Instances:
+
+To inform our ALB to where route the traffic we need to create a Target Group to point to its targets
+
+Then we will need to create a Listner for this target Group
+
+Repeat same for Internal Facing Loadbalancer
+
+![](./img/8.lb.jpg)
+
+### CREATING AUSTOALING GROUPS
+This Section we will create the Auto Scaling Group (ASG)
+Now we need to configure our ASG to be able to scale the EC2s out and in depending on the application traffic.
+
+Before we start configuring an ASG, we need to create the launch template and the the AMI needed. For now we are going to use a random AMI from AWS, we will use Packerto create our ami later on.
+
+Based on our Architetcture we need for Auto Scaling Groups for bastion, nginx, wordpress and tooling, so we will create two files; asg-bastion-nginx.tf will contain Launch Template and Austoscaling group for Bastion and Nginx, then asg-wordpress-tooling.tf will contain Launch Template and Austoscaling group for wordpress and tooling.
+
+Useful Terraform Documentation, go through this documentation and understand the arguement needed for each resources:
+
+SNS-topic
+SNS-notification
+Austoscaling
+Launch-template
+
+Create asg-bastion-nginx.tf and paste all the code snippet below;
+
+![](./img/9.asg1.jpg)
+![](./img/9.asg2.jpg)
+
+### STORAGE AND DATABASE
+Useful Terraform Documentation, go through this documentation and understand the arguement needed for each resources:
+
+RDS
+EFS
+KMS
+Create Elastic File System (EFS)
+In order to create an EFS you need to create a KMS key.
+
+AWS Key Management Service (KMS) makes it easy for you to create and manage cryptographic keys and control their use across a wide range of AWS services and in your applications.
+
+Add the following code to efs.tf
+
+## Create MySQL RDS
+Let us create the RDS itself using this snippet of code in rds.tf file:
+![](./img/11.rds.jpg)
